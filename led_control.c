@@ -10,6 +10,8 @@ int main() {
         return 1;
     }
 
+    printf("Starting");
+
     gpioSetMode(LED_GPIO, PI_OUTPUT);
 
     printf("Turning LED ON\n");

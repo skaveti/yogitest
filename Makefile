@@ -9,3 +9,9 @@ $(TARGET): led_control.c
 
 clean:
 	rm -f $(TARGET)
+	$(CC) -o $(TARGET) led_control.c $(CFLAGS)
+
+clean:
+	rm -f $(TARGET)
+
+
