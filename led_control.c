@@ -31,7 +31,7 @@ int main() {
     // Create socket
     if ((server_fd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
         perror("Socket failed");
-        exit(EXIT_FAILURE);
+        return 5;
     }
 
     // Prepare the sockaddr_in structure
@@ -43,14 +43,14 @@ int main() {
     if (bind(server_fd, (struct sockaddr *)&server_addr, sizeof(server_addr)) < 0) {
         perror("Bind failed");
         close(server_fd);
-        exit(EXIT_FAILURE);
+        return 2;
     }
 
     // Listen
     if (listen(server_fd, 3) < 0) {
         perror("Listen failed");
         close(server_fd);
-        exit(EXIT_FAILURE);
+        return 3;
     }
 
     printf("Server listening on port %d\n", PORT);
@@ -59,7 +59,7 @@ int main() {
     if ((client_fd = accept(server_fd, (struct sockaddr *)&client_addr, &addr_len)) < 0) {
         perror("Accept failed");
         close(server_fd);
-        exit(EXIT_FAILURE);
+        return 4;
     }
 
     read(client_fd, buffer, BUF_SIZE);
