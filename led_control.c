@@ -1,8 +1,15 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <pigpio.h>
 #include <unistd.h>
 #include <arpa/inet.h>
+#include <stdbool.h>
+#include <pthread.h>
+
+bool running = false;
+float current_temperature = 0.0f;
+pthread_mutex_t lock;
 
 float read_temp(const char *device_path) {
     FILE *fp = fopen(device_path, "r");
@@ -26,10 +33,12 @@ float read_temp(const char *device_path) {
     return temp_c;
 }
 
-int temperature_sensor_loop() {
+void* temperature_sensor_loop(void* arg) {
     const char *device_file = "/sys/bus/w1/devices//28-3c9fe3811386/w1_slave";
 
-    for (int i = 0; i < 30; i++) {
+    bool keep_running = true;
+
+    while (keep_running) {
         float temp = read_temp(device_file);
         if (temp > -100.0)
             printf("Temperature: %.2f °C\n", temp);
@@ -37,9 +46,13 @@ int temperature_sensor_loop() {
             printf("Sensor read error.\n");
 
         sleep(1);
+        pthread_mutex_lock(&lock);
+        current_temperature = temp;
+        keep_running = running;
+        pthread_mutex_unlock(&lock);
     }
 
-    return 0;
+    return NULL;
 }
 
 #define LED_GPIO 16  // Change this to your GPIO pin
@@ -54,6 +67,11 @@ int main() {
     }
 
     printf("Starting");
+    running = true;
+
+    pthread_t t1;
+    pthread_mutex_init(&lock, NULL);
+    pthread_create(&t1, NULL, temperature_sensor_loop, NULL);
 
     gpioSetMode(LED_GPIO, PI_OUTPUT);
 
@@ -61,7 +79,6 @@ int main() {
     gpioWrite(LED_GPIO, 1);
     sleep(1);
 
-    temperature_sensor_loop();
     printf("Starting TCP server\n");
 
     int server_fd, client_fd;
@@ -106,11 +123,18 @@ int main() {
     read(client_fd, buffer, BUF_SIZE);
     printf("Received: %s\n", buffer);
 
+    pthread_mutex_lock(&lock);
+    running = false;
+    pthread_mutex_unlock(&lock);
+
     send(client_fd, "Hello from server!", 19, 0);
     printf("Reply sent\n");
 
     close(client_fd);
     close(server_fd);
+
+    pthread_join(t1, NULL);
+    printf("Final temperature = %f\n", current_temperature);
 
     printf("Turning LED OFF\n");
     gpioWrite(LED_GPIO, 0);
