@@ -4,6 +4,44 @@
 #include <unistd.h>
 #include <arpa/inet.h>
 
+float read_temp(const char *device_path) {
+    FILE *fp = fopen(device_path, "r");
+    if (!fp) {
+        perror("Failed to open device file");
+        return -1000.0;
+    }
+
+    char buf[256];
+    char *temp_ptr = NULL;
+    float temp_c = -1000.0;
+
+    while (fgets(buf, sizeof(buf), fp)) {
+        if ((temp_ptr = strstr(buf, "t="))) {
+            temp_c = atof(temp_ptr + 2) / 1000.0;
+            break;
+        }
+    }
+
+    fclose(fp);
+    return temp_c;
+}
+
+int temperature_sensor_loop() {
+    const char *device_file = "/sys/bus/w1/devices//28-3c9fe3811386/w1_slave";
+
+    for (int i = 0; i < 30; i++) {
+        float temp = read_temp(device_file);
+        if (temp > -100.0)
+            printf("Temperature: %.2f °C\n", temp);
+        else
+            printf("Sensor read error.\n");
+
+        sleep(1);
+    }
+
+    return 0;
+}
+
 #define LED_GPIO 16  // Change this to your GPIO pin
 
 #define PORT 8080
@@ -22,6 +60,9 @@ int main() {
     printf("Turning LED ON\n");
     gpioWrite(LED_GPIO, 1);
     sleep(1);
+
+    temperature_sensor_loop();
+    printf("Starting TCP server\n");
 
     int server_fd, client_fd;
     struct sockaddr_in server_addr, client_addr;
