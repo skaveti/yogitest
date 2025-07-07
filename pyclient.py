@@ -9,6 +9,8 @@ def handle_client():
 
     HOST = config.get('SERVER', 'HOST', fallback='192.168.1.129')
     PORT = config.getint('SERVER', 'PORT', fallback=8080)
+
+    print(f"Connecting to server at {HOST}:{PORT}")
     try:
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
             s.connect((HOST, PORT))
