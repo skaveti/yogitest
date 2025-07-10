@@ -7,9 +7,63 @@
 #include <stdbool.h>
 #include <pthread.h>
 
+#define CLK 17
+#define DT  22
+#define SW  27
+
 bool running = false;
 float current_temperature = 0.0f;
 pthread_mutex_t lock;
+
+static int clk_pin, dt_pin, sw_pin;
+static uint8_t prev_state;
+
+volatile int encoder_count = 0;
+volatile uint8_t state = 0;
+
+void sm_button_pressed() {
+    printf("Button pressed!\n");
+}
+
+void encoder_callback(int gpio, int level, uint32_t tick) {
+    static const uint8_t transition_table[4][4] = {
+        {0, 1, 3, 0},  // from state 0
+        {1, 1, 2, 0},  // from state 1
+        {2, 1, 2, 3},  // from state 2
+        {3, 0, 2, 3}   // from state 3
+    };
+
+    int clk = gpioRead(CLK);
+    int dt  = gpioRead(DT);
+    uint8_t input = (clk << 1) | dt;
+
+    uint8_t next_state = transition_table[state][input];
+    if (state == 0 && next_state == 1) encoder_count++;
+    else if (state == 0 && next_state == 3) encoder_count--;
+
+    state = next_state;
+}
+
+
+void button_callback(int gpio, int level, uint32_t tick) {
+    if (level == 0) sm_button_pressed();
+}
+
+int encoder_init(int clk, int dt, int sw) {
+    clk_pin = clk; dt_pin = dt; sw_pin = sw;
+
+    gpioSetMode(clk, PI_INPUT); gpioSetPullUpDown(clk, PI_PUD_UP);
+    gpioSetMode(dt,  PI_INPUT); gpioSetPullUpDown(dt,  PI_PUD_UP);
+    gpioSetMode(sw,  PI_INPUT); gpioSetPullUpDown(sw,  PI_PUD_UP);
+
+    prev_state = (gpioRead(clk) << 1) | gpioRead(dt);
+
+    // gpioSetAlertFunc(clk, encoder_callback);
+    // gpioSetAlertFunc(dt, encoder_callback);
+    gpioSetAlertFunc(sw,  button_callback);
+
+    return 0;
+}
 
 float read_temp(const char *device_path) {
     FILE *fp = fopen(device_path, "r");
@@ -68,6 +122,8 @@ int main() {
 
     printf("Starting");
     running = true;
+
+    encoder_init(CLK, DT, SW);
 
     pthread_t t1;
     pthread_mutex_init(&lock, NULL);
