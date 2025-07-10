@@ -11,6 +11,9 @@
 #define DT  22
 #define SW  27
 
+#define I2C_BUS 1
+#define OLED_ADDR 0x3C
+
 bool running = false;
 float current_temperature = 0.0f;
 pthread_mutex_t lock;
@@ -114,6 +117,8 @@ void* temperature_sensor_loop(void* arg) {
 #define PORT 8080
 #define BUF_SIZE 1024
 
+int handle;
+
 int main() {
     if (gpioInitialise() < 0) {
         fprintf(stderr, "pigpio initialization failed\n");
@@ -124,6 +129,12 @@ int main() {
     running = true;
 
     encoder_init(CLK, DT, SW);
+
+    handle = i2cOpen(I2C_BUS, OLED_ADDR, 0);
+    if (handle < 0) {
+        printf("I2C open failed\n");
+        return 1;
+    }
 
     pthread_t t1;
     pthread_mutex_init(&lock, NULL);
@@ -195,6 +206,8 @@ int main() {
     printf("Turning LED OFF\n");
     gpioWrite(LED_GPIO, 0);
 
+    i2cClose(handle);
     gpioTerminate();
+
     return 0;
 }
