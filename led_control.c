@@ -112,6 +112,19 @@ void* temperature_sensor_loop(void* arg) {
     return NULL;
 }
 
+void write_cmd(uint8_t cmd) {
+    uint8_t buf[2] = {0x00, cmd}; // Command mode
+    i2cWriteDevice(handle, (char *)buf, 2);
+}
+
+void write_data(uint8_t *data, int len) {
+    uint8_t *buf = malloc(len + 1);
+    buf[0] = 0x40; // Data mode
+    memcpy(buf + 1, data, len);
+    i2cWriteDevice(handle, (char *)buf, len + 1);
+    free(buf);
+}
+
 #define LED_GPIO 16  // Change this to your GPIO pin
 
 #define PORT 8080
