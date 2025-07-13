@@ -7,3 +7,5 @@ __pycache__/
 tvimrc
 led_control
 requirements*.txt
+
+build/
