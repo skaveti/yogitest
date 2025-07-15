@@ -11,4 +11,6 @@ find_package(Threads REQUIRED)
 find_library(PIGPIO_LIB pigpio)
 
 add_executable(led_control led_control.c ssd1306.c ssd1306.h font.h)
+# target_compile_options(led_control PRIVATE -Wall -Wextra -Wpedantic -Werror)
+target_compile_options(led_control PRIVATE -Wall -Wextra -Wpedantic)
 target_link_libraries(led_control PRIVATE Threads::Threads ${PIGPIO_LIB} rt)

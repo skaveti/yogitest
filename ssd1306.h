@@ -53,6 +53,8 @@
 #define SSD1306_128_32_COLUMNS      128
 #define SSD1306_64_48_COLUMNS       64
 
+void write_cmd(int handle, uint8_t cmd);
+void write_data(int handle, uint8_t *data, int len);
 
 uint8_t ssd1306_init(uint8_t i2c_dev);
 uint8_t ssd1306_end();
