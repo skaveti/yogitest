@@ -102,6 +102,20 @@ int ssd1306_oled_clear_line(int handle, uint8_t row)
     return write_buffer(handle, data_buf, 1 + max_columns);
 }
 
+int ssd1306_oled_set_line(int handle, uint8_t row, uint8_t value)
+{
+    uint8_t i;
+    if (row >= (max_lines / 8))
+        return 1;
+        
+    ssd1306_oled_set_XY(handle, 0, row);
+    data_buf[0] = SSD1306_DATA_CONTROL_BYTE;
+    for (i = 0; i < max_columns; i++)
+        data_buf[i+1] = value;
+        
+    return write_buffer(handle, data_buf, 1 + max_columns);
+}
+
 int ssd1306_oled_clear_screen(int handle)
 {
     int rc = 0;

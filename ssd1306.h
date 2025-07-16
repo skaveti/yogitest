@@ -68,6 +68,7 @@ int write_buffer(int handle, uint8_t *buffer, int len);
 uint8_t ssd1306_oled_init(int handle);
 int ssd1306_oled_default_config(int handle);
 int ssd1306_oled_clear_line(int handle, uint8_t row);
+int ssd1306_oled_set_line(int handle, uint8_t row, uint8_t value);
 int ssd1306_oled_clear_screen(int handle);
 int ssd1306_oled_set_X(int handle, uint8_t x);
 int ssd1306_oled_set_Y(int handle, uint8_t y);

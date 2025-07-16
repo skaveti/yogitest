@@ -142,6 +142,7 @@ int main() {
         return 1;
     }
     ssd1306_oled_clear_screen(handle);
+    ssd1306_oled_set_line(handle, 0, 0xFF);
 
     pthread_t t1;
     pthread_mutex_init(&lock, NULL);
@@ -213,6 +214,7 @@ int main() {
     printf("Turning LED OFF\n");
     gpioWrite(LED_GPIO, 0);
 
+    ssd1306_oled_clear_screen(handle);
     i2cClose(handle);
     gpioTerminate();
 
