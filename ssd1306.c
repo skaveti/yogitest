@@ -59,6 +59,8 @@ int ssd1306_oled_default_config(int handle)
       
     oled_lines = SSD1306_HEIGHT;
     oled_columns = SSD1306_WIDTH;
+    
+    print("Number of lines / columns = %d, %d\n", oled_lines, oled_columns);
         
     max_lines = oled_lines;
     max_columns = oled_columns;
@@ -101,5 +103,36 @@ int ssd1306_oled_default_config(int handle)
     
     return write_cmd_buffer(handle, data_buf, i);
 }
+
+int ssd1306_oled_clear_line(int handle, uint8_t row)
+{
+    uint8_t i;
+    if (row >= (max_lines / 8))
+        return 1;
+        
+    ssd1306_oled_set_XY(0, row);
+    data_buf[0] = SSD1306_DATA_CONTROL_BYTE;
+    for (i = 0; i < max_columns; i++)
+        data_buf[i+1] = 0x00;
+        
+    return write_cmd_buffer(handle, data_buf, 1 + max_columns);
+}
+
+int ssd1306_oled_clear_screen(int handle)
+{
+    int rc = 0;
+    int status = 0;
+    uint8_t i;
+    
+    for (i = 0; i < (max_lines / 8); i++)
+    {
+        rc = ssd1306_oled_clear_line(handle, i);
+        if (rc != 0)
+            status = rc;
+    }
+    
+    return status;
+}
+
 
 

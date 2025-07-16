@@ -137,10 +137,12 @@ int main() {
     }
 
     int result = ssd1306_oled_default_config(handle);
-    if (handle != 0) {
+    if (result != 0) {
         printf("I2C initialization failed\n");
         return 1;
     }
+    ssd1306_oled_clear_screen(handle);
+    
 
     pthread_t t1;
     pthread_mutex_init(&lock, NULL);
