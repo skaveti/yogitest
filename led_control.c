@@ -136,6 +136,12 @@ int main() {
         return 1;
     }
 
+    int result = ssd1306_oled_default_config(handle);
+    if (handle != 0) {
+        printf("I2C initialization failed\n");
+        return 1;
+    }
+
     pthread_t t1;
     pthread_mutex_init(&lock, NULL);
     pthread_create(&t1, NULL, temperature_sensor_loop, NULL);

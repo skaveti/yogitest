@@ -66,7 +66,7 @@ void write_cmd(int handle, uint8_t cmd);
 void write_data(int handle, uint8_t *data, int len);
 
 uint8_t ssd1306_oled_init(int handle);
-int ssd1306_oled_default_config(uint8_t oled_lines, uint8_t oled_columns);
+int ssd1306_oled_default_config(int handle);
 
 uint8_t ssd1306_oled_onoff(uint8_t onoff);
 uint8_t ssd1306_oled_horizontal_flip(uint8_t flip);

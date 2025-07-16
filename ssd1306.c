@@ -25,7 +25,7 @@ void write_cmd(int handle, uint8_t cmd) {
 }
 
 int write_cmd_buffer(int handle, uint8_t *cmd, int len) {
-    i2cWriteDevice(handle, (char *)cmd, len);
+    return i2cWriteDevice(handle, (char *)cmd, len);
 }
 
 void write_data(int handle, uint8_t *data, int len) {
@@ -57,8 +57,8 @@ int ssd1306_oled_default_config(int handle)
     uint8_t oled_lines; 
     uint8_t oled_columns;
       
-    oled_lines = SSD1306_HEIGHT
-    oled_columns = SSD1306_WIDTH
+    oled_lines = SSD1306_HEIGHT;
+    oled_columns = SSD1306_WIDTH;
         
     max_lines = oled_lines;
     max_columns = oled_columns;
@@ -81,6 +81,7 @@ int ssd1306_oled_default_config(int handle)
     data_buf[i++] = SSD1306_COMM_MEMORY_MODE;   //MEMORYMODE
     data_buf[i++] = SSD1306_PAGE_MODE;          // page mode
     data_buf[i++] = SSD1306_COMM_HORIZ_NORM;    //SEGREMAP  Mirror screen horizontally (A0)
+    // data_buf[i++] = SSD1306_COMM_HORIZ_FLIP;    //SEGREMAP  Mirror screen horizontally (A0)
     data_buf[i++] = SSD1306_COMM_SCAN_NORM;     //COMSCANDEC Rotate screen vertically (C0)
     data_buf[i++] = SSD1306_COMM_COM_PIN;       //HARDWARE PIN 
     if (oled_lines == 32)
