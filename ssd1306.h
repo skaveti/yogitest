@@ -53,11 +53,21 @@
 #define SSD1306_128_32_COLUMNS      128
 #define SSD1306_64_48_COLUMNS       64
 
+#if defined SSD1306_128_64
+    #define SSD1306_WIDTH           128
+    #define SSD1306_HEIGHT          64
+    #define SSD1306_LCDWIDTH        128
+    #define SSD1306_LCDHEIGHT       64
+
+#endif
+
+
 void write_cmd(int handle, uint8_t cmd);
 void write_data(int handle, uint8_t *data, int len);
 
-uint8_t ssd1306_init(uint8_t i2c_dev);
-uint8_t ssd1306_end();
+uint8_t ssd1306_oled_init(int handle);
+int ssd1306_oled_default_config(uint8_t oled_lines, uint8_t oled_columns);
+
 uint8_t ssd1306_oled_onoff(uint8_t onoff);
 uint8_t ssd1306_oled_horizontal_flip(uint8_t flip);
 uint8_t ssd1306_oled_display_flip(uint8_t flip);
@@ -76,7 +86,6 @@ uint8_t ssd1306_oled_set_X(uint8_t x);
 uint8_t ssd1306_oled_set_Y(uint8_t y);
 uint8_t ssd1306_oled_set_XY(uint8_t x, uint8_t y);
 uint8_t ssd1306_oled_set_rotate(uint8_t degree);
-uint8_t ssd1306_oled_default_config(uint8_t oled_lines, uint8_t oled_columns);
 uint8_t ssd1306_oled_write_line(uint8_t size, char* ptr);
 uint8_t ssd1306_oled_write_string(uint8_t size, char* ptr);
 uint8_t ssd1306_oled_clear_line(uint8_t row);

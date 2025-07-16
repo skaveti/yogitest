@@ -7,12 +7,13 @@
 #include <stdbool.h>
 #include <pthread.h>
 
+#include "ssd1306.h"
+
 #define CLK 17
 #define DT  22
 #define SW  27
 
 #define I2C_BUS 1
-#define OLED_ADDR 0x3C
 
 bool running = false;
 float current_temperature = 0.0f;
@@ -129,7 +130,7 @@ int main() {
 
     encoder_init(CLK, DT, SW);
 
-    int handle = i2cOpen(I2C_BUS, OLED_ADDR, 0);
+    int handle = i2cOpen(I2C_BUS, SSD1306_I2C_ADDR, 0);
     if (handle < 0) {
         printf("I2C open failed\n");
         return 1;
