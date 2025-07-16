@@ -145,7 +145,7 @@ int ssd1306_oled_set_X(int handle, uint8_t x)
     data_buf[1] = SSD1306_COMM_LOW_COLUMN | (x & 0x0f);
     data_buf[2] = SSD1306_COMM_HIGH_COLUMN | ((x >> 4) & 0x0f);
     
-    return write_cmd_buffer(data_buf, 3);
+    return write_cmd_buffer(handle, data_buf, 3);
 }
 
 int ssd1306_oled_set_Y(int handle, uint8_t y)
@@ -158,7 +158,7 @@ int ssd1306_oled_set_Y(int handle, uint8_t y)
     data_buf[0] = SSD1306_COMM_CONTROL_BYTE;
     data_buf[1] = SSD1306_COMM_PAGE_NUMBER | (y & 0x0f);
 
-    return write_cmd_buffer(data_buf, 2);
+    return write_cmd_buffer(handle, data_buf, 2);
 }
 
 int ssd1306_oled_set_XY(int handle, uint8_t x, uint8_t y)
@@ -176,7 +176,7 @@ int ssd1306_oled_set_XY(int handle, uint8_t x, uint8_t y)
     
     data_buf[3] = SSD1306_COMM_HIGH_COLUMN | ((x >> 4) & 0x0f);
     
-    return write_cmd_buffer(data_buf, 4);
+    return write_cmd_buffer(handle, data_buf, 4);
 }
 
 
