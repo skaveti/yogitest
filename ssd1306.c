@@ -24,16 +24,16 @@ void write_cmd(int handle, uint8_t cmd) {
     i2cWriteDevice(handle, (char *)buf, 2);
 }
 
-int write_cmd_buffer(int handle, uint8_t *cmd, int len) {
-    return i2cWriteDevice(handle, (char *)cmd, len);
-}
-
 void write_data(int handle, uint8_t *data, int len) {
     uint8_t *buf = malloc(len + 1);
     buf[0] = SSD1306_DATA_CONTROL_BYTE; // Data mode
     memcpy(buf + 1, data, len);
     i2cWriteDevice(handle, (char *)buf, len + 1);
     free(buf);
+}
+
+int write_buffer(int handle, uint8_t *buffer, int len) {
+    return i2cWriteDevice(handle, (char *)buffer, len);
 }
 
 int ssd1306_oled_default_config(int handle)
@@ -85,7 +85,7 @@ int ssd1306_oled_default_config(int handle)
     data_buf[i++] = SSD1306_COMM_DISPLAY_ON;    //DISPLAY ON             
     data_buf[i++] = SSD1306_COMM_DISABLE_SCROLL;//Stop scroll
     
-    return write_cmd_buffer(handle, data_buf, i);
+    return write_buffer(handle, data_buf, i);
 }
 
 int ssd1306_oled_clear_line(int handle, uint8_t row)
@@ -99,7 +99,7 @@ int ssd1306_oled_clear_line(int handle, uint8_t row)
     for (i = 0; i < max_columns; i++)
         data_buf[i+1] = 0x00;
         
-    return write_cmd_buffer(handle, data_buf, 1 + max_columns);
+    return write_buffer(handle, data_buf, 1 + max_columns);
 }
 
 int ssd1306_oled_clear_screen(int handle)
@@ -129,7 +129,7 @@ int ssd1306_oled_set_X(int handle, uint8_t x)
     data_buf[1] = SSD1306_COMM_LOW_COLUMN | (x & 0x0f);
     data_buf[2] = SSD1306_COMM_HIGH_COLUMN | ((x >> 4) & 0x0f);
     
-    return write_cmd_buffer(handle, data_buf, 3);
+    return write_buffer(handle, data_buf, 3);
 }
 
 int ssd1306_oled_set_Y(int handle, uint8_t y)
@@ -142,7 +142,7 @@ int ssd1306_oled_set_Y(int handle, uint8_t y)
     data_buf[0] = SSD1306_COMM_CONTROL_BYTE;
     data_buf[1] = SSD1306_COMM_PAGE_NUMBER | (y & 0x0f);
 
-    return write_cmd_buffer(handle, data_buf, 2);
+    return write_buffer(handle, data_buf, 2);
 }
 
 int ssd1306_oled_set_XY(int handle, uint8_t x, uint8_t y)
@@ -160,7 +160,7 @@ int ssd1306_oled_set_XY(int handle, uint8_t x, uint8_t y)
     
     data_buf[3] = SSD1306_COMM_HIGH_COLUMN | ((x >> 4) & 0x0f);
     
-    return write_cmd_buffer(handle, data_buf, 4);
+    return write_buffer(handle, data_buf, 4);
 }
 
 

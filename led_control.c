@@ -125,7 +125,7 @@ int main() {
         return 1;
     }
 
-    printf("Starting");
+    printf("Starting ...\n");
     running = true;
 
     encoder_init(CLK, DT, SW);
@@ -142,7 +142,6 @@ int main() {
         return 1;
     }
     ssd1306_oled_clear_screen(handle);
-    
 
     pthread_t t1;
     pthread_mutex_init(&lock, NULL);

@@ -58,12 +58,12 @@
     #define SSD1306_HEIGHT          64
     #define SSD1306_LCDWIDTH        128
     #define SSD1306_LCDHEIGHT       64
-
 #endif
-
 
 void write_cmd(int handle, uint8_t cmd);
 void write_data(int handle, uint8_t *data, int len);
+
+int write_buffer(int handle, uint8_t *buffer, int len);
 
 uint8_t ssd1306_oled_init(int handle);
 int ssd1306_oled_default_config(int handle);
