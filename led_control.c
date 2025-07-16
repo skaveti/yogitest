@@ -136,6 +136,7 @@ int main() {
         return 1;
     }
 
+    /*
     int result = ssd1306_oled_default_config(handle);
     if (result != 0) {
         printf("I2C initialization failed\n");
@@ -143,7 +144,8 @@ int main() {
     }
     ssd1306_oled_clear_screen(handle);
     ssd1306_oled_set_line(handle, 0, 0xFF);
-
+    */
+    
     pthread_t t1;
     pthread_mutex_init(&lock, NULL);
     pthread_create(&t1, NULL, temperature_sensor_loop, NULL);
@@ -214,7 +216,7 @@ int main() {
     printf("Turning LED OFF\n");
     gpioWrite(LED_GPIO, 0);
 
-    ssd1306_oled_clear_screen(handle);
+    // ssd1306_oled_clear_screen(handle);
     i2cClose(handle);
     gpioTerminate();
 

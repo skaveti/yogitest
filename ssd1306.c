@@ -65,7 +65,7 @@ int ssd1306_oled_default_config(int handle)
     data_buf[i++] = SSD1306_COMM_CHARGE_PUMP;   //CHARGEPUMP
     data_buf[i++] = 0x14;                       //turn on charge pump
     data_buf[i++] = SSD1306_COMM_MEMORY_MODE;   //MEMORYMODE
-    data_buf[i++] = SSD1306_PAGE_MODE;          // page mode
+    data_buf[i++] = SSD1306_HORI_MODE;          // page mode
     data_buf[i++] = SSD1306_COMM_HORIZ_NORM;    //SEGREMAP  Mirror screen horizontally (A0)
     // data_buf[i++] = SSD1306_COMM_HORIZ_FLIP;    //SEGREMAP  Mirror screen horizontally (A0)
     data_buf[i++] = SSD1306_COMM_SCAN_NORM;     //COMSCANDEC Rotate screen vertically (C0)
