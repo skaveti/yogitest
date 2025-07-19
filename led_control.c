@@ -136,6 +136,8 @@ int main() {
         return 1;
     }
 
+    ssd1306_startup(handle);
+
     /*
     int result = ssd1306_oled_default_config(handle);
     if (result != 0) {
@@ -145,7 +147,7 @@ int main() {
     ssd1306_oled_clear_screen(handle);
     ssd1306_oled_set_line(handle, 0, 0xFF);
     */
-    
+
     pthread_t t1;
     pthread_mutex_init(&lock, NULL);
     pthread_create(&t1, NULL, temperature_sensor_loop, NULL);
