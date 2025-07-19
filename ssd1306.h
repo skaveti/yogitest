@@ -65,7 +65,7 @@ void write_data(int handle, uint8_t *data, int len);
 
 int write_buffer(int handle, uint8_t *buffer, int len);
 
-void ssd1306_startup(int handle)
+void ssd1306_startup(int handle);
 
 int ssd1306_oled_default_config(int handle);
 int ssd1306_oled_clear_line(int handle, uint8_t row);

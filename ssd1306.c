@@ -65,10 +65,10 @@ void ssd1306_startup(int handle)
     };
 
     for (int i = 0; i < sizeof(init_cmds); i++) {
-        write_cmd(init_cmds[i]);
+        write_cmd(handle, init_cmds[i]);
     }
 }
-
+/*
 int ssd1306_oled_default_config(int handle)
 {
     uint8_t oled_lines;
@@ -209,7 +209,4 @@ int ssd1306_oled_set_XY(int handle, uint8_t x, uint8_t y)
 
     return write_buffer(handle, data_buf, 4);
 }
-
-
-
-
+*/
