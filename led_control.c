@@ -137,6 +137,7 @@ int main() {
     }
 
     ssd1306_startup(handle);
+    ssd1306_fill_page(handle, 0x00, 0xFF);
 
     /*
     int result = ssd1306_oled_default_config(handle);
@@ -218,7 +219,7 @@ int main() {
     printf("Turning LED OFF\n");
     gpioWrite(LED_GPIO, 0);
 
-    // ssd1306_oled_clear_screen(handle);
+    ssd1306_fill_page(handle, 0x00, 0x00);
     i2cClose(handle);
     gpioTerminate();
 

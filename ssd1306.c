@@ -32,6 +32,11 @@ void write_data(int handle, uint8_t *data, int len) {
     free(buf);
 }
 
+void enable(handle, bool on)
+{
+    write_cmd(handle, SSD1306_COMM_DISPLAY_OFF | static_cast<uint8_t>(on));
+}
+
 void ssd1306_startup(int handle)
 {
     uint8_t oled_lines;
@@ -68,59 +73,24 @@ void ssd1306_startup(int handle)
         write_cmd(handle, init_cmds[i]);
     }
 }
-/*
-int ssd1306_oled_default_config(int handle)
+
+void ssd1306_fill_page(int handle, uint8_t page, uint8_t value)
 {
-    uint8_t oled_lines;
-    uint8_t oled_columns;
+    uint8_t fill_cmds[] = {
+        SSD1306_COMM_SET_COL_ADDR, 0x00, 0x7F,
+        SSD1306_COMM_SET_PAGE_ADDR, page, page
+    };
 
-    oled_lines = SSD1306_HEIGHT;
-    oled_columns = SSD1306_WIDTH;
+    for (int i = 0; i < sizeof(fill_cmds); i++) {
+        write_cmd(handle, init_cmds[i]);
+    }
 
-    printf("Number of lines / columns = %d, %d\n", oled_lines, oled_columns);
-
-    max_lines = oled_lines;
-    max_columns = oled_columns;
-    global_x = 0;
-    global_y = 0;
-
-    uint16_t i = 0;
-    data_buf[i++] = SSD1306_COMM_CONTROL_BYTE;  //command control byte
-    data_buf[i++] = SSD1306_COMM_DISPLAY_OFF;   //display off
-    data_buf[i++] = SSD1306_COMM_DISP_NORM;     //Set Normal Display (default)
-    data_buf[i++] = SSD1306_COMM_CLK_SET;       //SETDISPLAYCLOCKDIV
-    data_buf[i++] = 0x80;                       // the suggested ratio 0x80
-    data_buf[i++] = SSD1306_COMM_MULTIPLEX;     //SSD1306_SETMULTIPLEX
-    data_buf[i++] = oled_lines - 1;             // height is 32 or 64 (always -1)
-    data_buf[i++] = SSD1306_COMM_VERT_OFFSET;   //SETDISPLAYOFFSET
-    data_buf[i++] = 0;                          //no offset
-    data_buf[i++] = SSD1306_COMM_START_LINE;    //SETSTARTLINE
-    data_buf[i++] = SSD1306_COMM_CHARGE_PUMP;   //CHARGEPUMP
-    data_buf[i++] = 0x14;                       //turn on charge pump
-    data_buf[i++] = SSD1306_COMM_MEMORY_MODE;   //MEMORYMODE
-    data_buf[i++] = SSD1306_HORI_MODE;          // page mode
-    data_buf[i++] = SSD1306_COMM_HORIZ_NORM;    //SEGREMAP  Mirror screen horizontally (A0)
-    // data_buf[i++] = SSD1306_COMM_HORIZ_FLIP;    //SEGREMAP  Mirror screen horizontally (A0)
-    data_buf[i++] = SSD1306_COMM_SCAN_NORM;     //COMSCANDEC Rotate screen vertically (C0)
-    data_buf[i++] = SSD1306_COMM_COM_PIN;       //HARDWARE PIN
-    if (oled_lines == 32)
-        data_buf[i++] = 0x02;                       // for 32 lines
-    else
-        data_buf[i++] = 0x12;                       // for 64 lines or 48 lines
-    data_buf[i++] = SSD1306_COMM_CONTRAST;      //SETCONTRAST
-    data_buf[i++] = 0x7f;                       // default contract value
-    data_buf[i++] = SSD1306_COMM_PRECHARGE;     //SETPRECHARGE
-    data_buf[i++] = 0xf1;                       // default precharge value
-    data_buf[i++] = SSD1306_COMM_DESELECT_LV;   //SETVCOMDETECT
-    data_buf[i++] = 0x40;                       // default deselect value
-    data_buf[i++] = SSD1306_COMM_RESUME_RAM;    //DISPLAYALLON_RESUME
-    data_buf[i++] = SSD1306_COMM_DISP_NORM;     //NORMALDISPLAY
-    data_buf[i++] = SSD1306_COMM_DISPLAY_ON;    //DISPLAY ON
-    data_buf[i++] = SSD1306_COMM_DISABLE_SCROLL;//Stop scroll
-
-    return write_buffer(handle, data_buf, i);
+    for (i = 0; i < max_columns; i++)
+        data_buf[i] = value;
+    write_data(handle, data_buf, max_columns);
 }
 
+/*
 int ssd1306_oled_clear_line(int handle, uint8_t row)
 {
     uint8_t i;
