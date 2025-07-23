@@ -62,10 +62,12 @@
 
 void write_cmd(int handle, uint8_t cmd);
 void write_data(int handle, uint8_t *data, int len);
+void enable(int handle, uint8_t on);
 
 int write_buffer(int handle, uint8_t *buffer, int len);
 
 void ssd1306_startup(int handle);
+void ssd1306_clear(int handle);
 void ssd1306_fill_page(int handle, uint8_t page, uint8_t value);
 
 int ssd1306_oled_default_config(int handle);

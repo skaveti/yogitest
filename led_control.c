@@ -137,7 +137,8 @@ int main() {
     }
 
     ssd1306_startup(handle);
-    ssd1306_fill_page(handle, 0x00, 0xFF);
+    // ssd1306_fill_page(handle, 0x00, 0xFF);
+    ssd1306_clear(handle);
 
     /*
     int result = ssd1306_oled_default_config(handle);
@@ -220,6 +221,7 @@ int main() {
     gpioWrite(LED_GPIO, 0);
 
     ssd1306_fill_page(handle, 0x00, 0x00);
+    ssd1306_fill_page(handle, 0x01, 0x00);
     i2cClose(handle);
     gpioTerminate();
 

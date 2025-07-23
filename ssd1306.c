@@ -16,6 +16,7 @@
 static uint8_t data_buf[1024];
 static uint8_t max_lines = 0;
 static uint8_t max_columns = 0;
+static uint8_t max_pages = 0;
 static uint8_t global_x = 0;
 static uint8_t global_y = 0;
 
@@ -32,9 +33,9 @@ void write_data(int handle, uint8_t *data, int len) {
     free(buf);
 }
 
-void enable(handle, bool on)
+void enable(int handle, uint8_t on)
 {
-    write_cmd(handle, SSD1306_COMM_DISPLAY_OFF | static_cast<uint8_t>(on));
+    write_cmd(handle, SSD1306_COMM_DISPLAY_OFF | on);
 }
 
 void ssd1306_startup(int handle)
@@ -48,6 +49,7 @@ void ssd1306_startup(int handle)
     printf("Number of lines / columns = %d, %d\n", oled_lines, oled_columns);
 
     max_lines = oled_lines;
+    max_pages = max_lines / 8;
     max_columns = oled_columns;
     global_x = 0;
     global_y = 0;
@@ -82,12 +84,30 @@ void ssd1306_fill_page(int handle, uint8_t page, uint8_t value)
     };
 
     for (int i = 0; i < sizeof(fill_cmds); i++) {
-        write_cmd(handle, init_cmds[i]);
+        write_cmd(handle, fill_cmds[i]);
     }
 
-    for (i = 0; i < max_columns; i++)
+    for (int i = 0; i < max_columns; i++)
         data_buf[i] = value;
     write_data(handle, data_buf, max_columns);
+}
+
+void ssd1306_clear(int handle)
+{
+    uint8_t fill_cmds[] = {
+        SSD1306_COMM_SET_COL_ADDR, 0x00, 0x7F,
+        SSD1306_COMM_SET_PAGE_ADDR, 0x00, 0x07
+    };
+
+    for (int i = 0; i < sizeof(fill_cmds); i++) {
+        write_cmd(handle, fill_cmds[i]);
+    }
+
+    for (int i = 0; i < max_pages*max_columns; i++)
+        data_buf[i] = 0x00;
+    for (int i = 0; i < 2*max_columns; i++)
+        data_buf[i] = 0xFF;
+    write_data(handle, data_buf, max_pages*max_columns);
 }
 
 /*
