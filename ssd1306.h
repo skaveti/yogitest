@@ -61,7 +61,7 @@
 #endif
 
 void write_cmd(int handle, uint8_t cmd);
-void write_data(int handle, uint8_t *data, int len);
+void write_data(int handle, const uint8_t *data, int len);
 void enable(int handle, uint8_t on);
 
 int write_buffer(int handle, uint8_t *buffer, int len);
@@ -69,6 +69,7 @@ int write_buffer(int handle, uint8_t *buffer, int len);
 void ssd1306_startup(int handle);
 void ssd1306_clear(int handle);
 void ssd1306_fill_page(int handle, uint8_t page, uint8_t value);
+void ssd1306_oled_write_line(int handle, uint8_t size, const char* ptr);
 
 int ssd1306_oled_default_config(int handle);
 int ssd1306_oled_clear_line(int handle, uint8_t row);
@@ -93,7 +94,6 @@ uint8_t ssd1306_oled_set_page(uint8_t start, uint8_t end);
 uint8_t ssd1306_oled_set_constrast(uint8_t value);
 uint8_t ssd1306_oled_scroll_onoff(uint8_t onoff);
 uint8_t ssd1306_oled_set_rotate(uint8_t degree);
-uint8_t ssd1306_oled_write_line(uint8_t size, char* ptr);
 uint8_t ssd1306_oled_write_string(uint8_t size, char* ptr);
 
 #endif

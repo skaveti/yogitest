@@ -77,7 +77,7 @@ float read_temp(const char *device_path) {
     }
 
     char buf[256];
-    char *temp_ptr = NULL;
+    const char *temp_ptr = NULL;
     float temp_c = -1000.0;
 
     while (fgets(buf, sizeof(buf), fp)) {

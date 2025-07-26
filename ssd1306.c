@@ -25,12 +25,12 @@ void write_cmd(int handle, uint8_t cmd) {
     i2cWriteDevice(handle, (char *)buf, 2);
 }
 
-void write_data(int handle, uint8_t *data, int len) {
-    uint8_t *buf = malloc(len + 1);
+void write_data(int handle, const uint8_t *data, int len) {
+    uint8_t buf[1024];
     buf[0] = SSD1306_DATA_CONTROL_BYTE; // Data mode
     memcpy(buf + 1, data, len);
     i2cWriteDevice(handle, (char *)buf, len + 1);
-    free(buf);
+    // free(buf);
 }
 
 void enable(int handle, uint8_t on)
@@ -53,15 +53,6 @@ void ssd1306_startup(int handle)
     max_columns = oled_columns;
     global_x = 0;
     global_y = 0;
-
-    // Init sequence (partial)
-    uint8_t init_cmds_full[] = {
-        0xAE, 0xD5, 0x80, 0xA8, 0x3F,
-        0xD3, 0x00, 0x40, 0x8D, 0x14,
-        0x20, 0x00, 0xA1, 0xC8, 0xDA,
-        0x12, 0x81, 0xCF, 0xD9, 0xF1,
-        0xDB, 0x40, 0xA4, 0xA6, 0xAF
-    };
 
     // Init sequence (partial)
     uint8_t init_cmds[] = {
@@ -109,6 +100,87 @@ void ssd1306_clear(int handle)
         data_buf[i] = 0xFF;
     write_data(handle, data_buf, max_pages*max_columns);
 }
+
+void ssd1306_oled_set_X(int handle, uint8_t x)
+{
+    if (x >= max_columns)
+        return;
+
+    global_x = x;
+
+    data_buf[0] = SSD1306_COMM_LOW_COLUMN | (x & 0x0f);
+    data_buf[1] = SSD1306_COMM_HIGH_COLUMN | ((x >> 4) & 0x0f);
+
+    for (int i = 0; i < 2; i++) {
+        write_cmd(handle, data_buf[i]);
+    }
+}
+
+int ssd1306_oled_set_Y(int handle, uint8_t y)
+{
+    if (y >= (max_lines / 8))
+        return;
+
+    global_y = y;
+
+    data_buf[0] = SSD1306_COMM_PAGE_NUMBER | (y & 0x0f);
+
+    write_cmd(handle, data_buf[0]);
+
+    return;
+}
+
+
+void ssd1306_oled_write_line(int handle, uint8_t size, const char* ptr)
+{
+    uint16_t i = 0;
+    uint16_t index = 0;
+    uint8_t* font_table = 0;
+    uint8_t font_table_width = 0;
+
+    if (ptr == 0)
+        return 1;
+
+    if (size == SSD1306_FONT_SMALL) // 5x7
+    {
+        font_table = (uint8_t*)font5x7;
+        font_table_width = 5;
+    }
+    else if (size == SSD1306_FONT_NORMAL) // 8x8
+    {
+        font_table = (uint8_t*)font8x8;
+        font_table_width = 8;
+    }
+    else
+        return 1;
+
+    // font table range in ascii table is from 0x20(space) to 0x7e(~)
+    while (ptr[index] != 0 && i <= 1024)
+    {
+        if ((ptr[index] < ' ') || (ptr[index] > '~'))
+            return 1;
+
+        const uint8_t* font_ptr = &font_table[(ptr[index] - 0x20) * font_table_width];
+        uint8_t j = 0;
+        for (j = 0; j < font_table_width; j++)
+        {
+            data_buf[i++] = font_ptr[j];
+            if (i > 1024)
+                return 1;
+        }
+        // insert 1 col space for small font size)
+        if (size == SSD1306_FONT_SMALL)
+            data_buf[i++] = 0x00;
+        index++;
+    }
+
+    write_data(handle, data_buf, i);
+
+    return;
+}
+
+
+// These are old functions
 
 /*
 int ssd1306_oled_clear_line(int handle, uint8_t row)
