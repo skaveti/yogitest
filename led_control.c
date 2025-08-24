@@ -208,7 +208,7 @@ int main() {
     running = false;
     pthread_mutex_unlock(&lock);
 
-    send(client_fd, "Hello from server!", 19, 0);
+    send(client_fd, "Hello from server from me!", 19, 0);
     printf("Reply sent\n");
 
     close(client_fd);
